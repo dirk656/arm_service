@@ -13,7 +13,7 @@ RIGHT_ARM_CAN = "can1"
 # 坐标转换和缩放因子
 # ROS中的单位是米和弧度，Piper SDK需要的是整数
 # 你需要根据实际情况调整这些缩放比例
-POS_SCALE_FACTOR = 1000000  # 1m -> 1000 units
+POS_SCALE_FACTOR = 10000000  # 1m -> 1000 units
 ROT_SCALE_FACTOR = 1000000 # 1rad -> 1000 units
 
 class ArmControllerNode(Node):
@@ -132,10 +132,13 @@ class ArmControllerNode(Node):
             return
         with self.left_lock:
             is_open = msg.data
+            # print("left")
+            # print(is_open)
             if is_open:
-                self.left_arm.GripperCtrl(gripper_code=1)
+                self.left_arm.GripperCtrl(gripper_angle=100000,gripper_effort=200,gripper_code=1)
             else:
-                self.left_arm.GripperCtrl(gripper_code=2)
+                self.left_arm.GripperCtrl(gripper_angle=0,gripper_effort=500,gripper_code=1)
+                
 
     def right_arm_callback(self, msg: Pose):
         if not self.right_arm:
@@ -169,11 +172,13 @@ class ArmControllerNode(Node):
             return
         with self.right_lock:
             is_open = msg.data
+            # print("right")
+            # print(is_open)
             if is_open:
-                self.right_arm.GripperCtrl(gripper_code=1)
+                self.right_arm.GripperCtrl(gripper_angle=100000,gripper_effort=200,gripper_code=1)
             else:
-                self.right_arm.GripperCtrl(gripper_code=2)
-
+                self.right_arm.GripperCtrl(gripper_angle=0,gripper_effort=500,gripper_code=1)
+                
     def shutdown(self):
         """安全关闭节点和机械臂"""
         self.get_logger().info("Shutting down...")
